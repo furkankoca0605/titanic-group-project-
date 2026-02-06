@@ -5,7 +5,7 @@ metr.stat = function(x){
 
   # einfacher Vektor mit Min, Max, Mean, Median, Quart, Sd
 
-  v = c(Min = min(x, na.rm = TRUE), Max = max(x, na.rm = TRUE), Mean = mean(x, na.rm = TRUE),
+  v = c(Min = min(x), Max = max(x, na.rm = TRUE), Mean = mean(x, na.rm = TRUE),
         Median = median(x, na.rm = TRUE), Quart = quantile(x, na.rm = TRUE)[c(2, 4)],
         StandDev = sd(x, na.rm = TRUE))
 
