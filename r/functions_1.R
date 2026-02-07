@@ -14,7 +14,7 @@
 
 # Visualisierung für kategoriale Variablen Folgt:
 library(tidyverse)
-
+source("functions_2.R")
 #Titanic Data Frame aus 1 einlesen
   df<- titanic
 
