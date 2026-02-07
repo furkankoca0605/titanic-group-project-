@@ -14,6 +14,10 @@
 
 # Visualisierung für kategoriale Variablen Folgt:
 library(tidyverse)
+
+#Titanic Data Frame aus 1 einlesen
+  df<- titanic
+
 #Funktion für Variablen 
 plot_cats <- function(data,
                       x_var,
@@ -30,9 +34,6 @@ plot_cats <- function(data,
   if (length(missing_vars) > 0) {
     stop("Diese Variablen fehlen im Datensatz: ", paste(missing_vars, collapse = ", "))
   }
-  
-#Titanic Data Frame aus 1 einlesen
-  df<- titanic
   
   #Erstellen von einem Diagramm vorbereiten
   p <- ggplot(df, aes(x = .data[[x_var]], fill = .data[[fill_var]])) +
