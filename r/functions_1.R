@@ -50,6 +50,49 @@ final
 write.csv2(final, "C:\\Users\\nroes\\OneDrive\\R WA\\titanic_ii.csv", row.names = FALSE)
 
 # (iii)		deskriptive bivariate Statistiken (zwei kategoriale Variablen)
+#Verweist auf andere Skripte, um die notwendigen Dateien zu finden
+source("C:\\Users\\nroes\\OneDrive\\R WA\\functions_2.R")
+source("C:\\Users\\nroes\\OneDrive\\R WA\\data_cleaning.R")
+
+#data frame aus Skript 1 in neuen df zum arbeiten
+df <- titanic
+
+#Variablen die benutzt werden sollen als Vektor
+vars <- c("Survived","Pclass","Sex","Embarked","Title","Deck","Side")
+
+#Sorgt dafür, dass auch Variablen die nicht ein Faktor sind benutzt werden können
+df[vars] <- lapply(df[vars], factor)
+
+#Funktion wird definiert 
+surv_wide <- function(df, var, digits=3){
+  x <- addNA(df[[var]])
+  y <- addNA(df$Survived)
+  tab <- table(level=x, survived=y, useNA="ifany")
+  n_tot <- rowSums(tab)
+  
+  #Trennen überlebt oder nicht  
+  n_yes <- if ("Yes" %in% colnames(tab)) tab[, "Yes"] else rep(0, nrow(tab))
+  n_no  <- if ("No"  %in% colnames(tab)) tab[, "No"]  else rep(0, nrow(tab))
+  
+  #Bennent die Spalten 
+  data.frame(
+    variable = var,
+    level    = rownames(tab),
+    n_total  = as.integer(n_tot),
+    absolut_ja    = as.integer(n_yes),
+    absolut_nein     = as.integer(n_no),
+    relativ_ja    = round(as.numeric(n_yes / n_tot), digits),
+    relativ_nein     = round(as.numeric(n_no  / n_tot), digits),
+    stringsAsFactors = FALSE
+  )
+}
+
+#Ruft die Funktion auf und speichrt den fertigen df
+finaliii <- do.call(rbind, lapply(setdiff(vars,"Survived"), \(v) surv_wide(df, v)))
+finaliii
+
+#Speichert den df als CSV datei
+write.csv2(finaliii, "C:\\Users\\nroes\\OneDrive\\R WA\\titanic_iii_2.csv", row.names=FALSE)
 
 
 # (iv)		deskriptive bivariate Statistiken (kategoriale & dichotome Variablen)
