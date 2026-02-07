@@ -2,7 +2,52 @@
 
 
 # (ii)		deskriptive Statistiken (kategoriale Variablen)
+#Verweist auf andere Skripte, um die notwendigen Dateien zu finden
+source("C:\\Users\\nroes\\OneDrive\\R WA\\functions_2.R")
+source("C:\\Users\\nroes\\OneDrive\\R WA\\data_cleaning.R")
 
+#data frame aus Skript 1 in neuen df zum arbeiten
+df <- titanic
+
+#Variablen die benutzt werden sollen als Vektor
+vars <- c("Deck","Sex","Embarked","Side","Survived","Title","Pclass")
+
+#Sorgt dafür, dass auch Variablen die nicht ein Faktor sind benutzt werden können
+df[vars] <- lapply(df[vars], factor)
+
+#Funktion wird definiert 
+freq_missing <- function(df, vars, include_na = TRUE, digits = 3) {
+  out <- lapply(vars, function(v) {
+    #Liste pro Variable
+    x <- df[[v]]
+    
+    #Berechnung für Gesamte Anzahl und Fehlende Werte    
+    fehlende_n  <- sum(is.na(x))
+    n_total <- length(x)
+    #BErechnung für relative und Absolute Häufigkeit    
+    tab  <- table(x, useNA = if (include_na) "ifany" else "no")
+    prop <- prop.table(tab)
+    
+    #Bennent die Spalten
+    data.frame(
+      variable  = v,
+      level     = names(tab),
+      anteil_absolut      = as.integer(tab),
+      anteil_relativ     = round(as.numeric(prop), digits),
+      n_fehlend = fehlende_n,
+      n_total   = n_total,
+      stringsAsFactors = FALSE
+    )
+  })
+  #Alle einzelnen VAriablenlisten zu einer 
+  do.call(rbind, out)
+}
+#Ruft die Funktion auf und speichrt den fertigen df
+final <- freq_missing(df, vars, include_na = TRUE)
+final
+
+#Speichert den df als CSV datei
+write.csv2(final, "C:\\Users\\nroes\\OneDrive\\R WA\\titanic_ii.csv", row.names = FALSE)
 
 # (iii)		deskriptive bivariate Statistiken (zwei kategoriale Variablen)
 
