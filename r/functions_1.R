@@ -101,11 +101,12 @@ write.csv2(finaliii, "C:\\Users\\nroes\\OneDrive\\R WA\\titanic_iii_2.csv", row.
 # (v)			geeignete Visualisierung von drei/vier kategorialen Variablen
 
 # Visualisierung für kategoriale Variablen Folgt:
+#Verweist auf andere Skripte, um die notwendigen Dateien zu finden und lädt erweiterungen
+source("C:\\Users\\nroes\\OneDrive\\R WA\\functions_2.R")
+source("C:\\Users\\nroes\\OneDrive\\R WA\\data_cleaning.R")
 library(tidyverse)
-source("functions_2.R")
-#Titanic Data Frame aus 1 einlesen
-  df<- titanic
 
+# Visualisierung für kategoriale Variablen
 #Funktion für Variablen 
 plot_cats <- function(data,
                       x_var,
@@ -117,11 +118,14 @@ plot_cats <- function(data,
   vars <- c(x_var, fill_var, facet_var, facet2_var)
   vars <- vars[!is.null(vars)]
   
-#Fehlende Variablen erkennen 
+  #Fehlende Variablen erkennen 
   missing_vars <- setdiff(vars, names(data))
   if (length(missing_vars) > 0) {
     stop("Diese Variablen fehlen im Datensatz: ", paste(missing_vars, collapse = ", "))
   }
+  
+  #Titanic Data Frame aus 1 einlesen
+  df<- titanic
   
   #Erstellen von einem Diagramm vorbereiten
   p <- ggplot(df, aes(x = .data[[x_var]], fill = .data[[fill_var]])) +
@@ -151,5 +155,4 @@ plot_cats(
   facet_var = "Sex",
   facet2_var = "Embarked"
 )
-
 
