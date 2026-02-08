@@ -190,6 +190,7 @@ met_dic_stat = function(d, vm, vc){
 library(tidyverse)
 
 # Visualisierung für kategoriale Variablen
+library(ggplot2)
 #Funktion für Variablen 
 plot_cats <- function(data,
                       x_var,
@@ -197,47 +198,43 @@ plot_cats <- function(data,
                       facet_var = NULL,
                       facet2_var = NULL,
                       position = "fill") {
-  
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Paket 'ggplot2' ist nicht installiert.")
+  }
+  if (!requireNamespace("rlang", quietly = TRUE)) {
+    stop("Paket 'rlang' ist nicht installiert.")
+  }
+#Variablen als Liste
   vars <- c(x_var, fill_var, facet_var, facet2_var)
   vars <- vars[!is.null(vars)]
-  
-  #Fehlende Variablen erkennen 
+    #Fehlende Variablen erkennen 
   missing_vars <- setdiff(vars, names(data))
   if (length(missing_vars) > 0) {
     stop("Diese Variablen fehlen im Datensatz: ", paste(missing_vars, collapse = ", "))
   }
-  
-  #Titanic Data Frame aus 1 einlesen
-  df<- titanic
-  
   #Erstellen von einem Diagramm vorbereiten
-  p <- ggplot(df, aes(x = .data[[x_var]], fill = .data[[fill_var]])) +
-    geom_bar(position = position, color = "white") +
-    labs(
+  p <- ggplot2::ggplot(
+    data,
+    ggplot2::aes(x = rlang::.data[[x_var]], fill = rlang::.data[[fill_var]])
+  ) +
+    ggplot2::geom_bar(position = position, color = "white") +
+    ggplot2::labs(
       x = x_var,
       fill = fill_var,
       y = ifelse(position == "fill", "Anteil", "Anzahl")
     ) +
-    theme_minimal() +
-    theme(panel.grid.minor = element_blank())
-  
-  # 3te und 4te Variable für Zeilen und Spalten
+    ggplot2::theme_minimal() +
+    ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
+ # 3te und 4te Variable für Zeilen und Spalten
   if (!is.null(facet_var) && !is.null(facet2_var)) {
-    p <- p + facet_grid(rows = vars(.data[[facet_var]]),
-                        cols  = vars(.data[[facet2_var]]))
+    p <- p + ggplot2::facet_grid(
+      rows = ggplot2::vars(rlang::.data[[facet_var]]),
+      cols = ggplot2::vars(rlang::.data[[facet2_var]])
+    )
   }
-  
+
   p
 }
-
-#Anwendung mit Variablen
-plot_cats(
-  data = titanic,
-  x_var = "Pclass",
-  fill_var = "Survived",
-  facet_var = "Sex",
-  facet2_var = "Embarked"
-)
 
 
 # (vi)		deskriptive bivariate Statistiken (metrische & kategoriale Variablen)
