@@ -142,9 +142,9 @@ b[setdiff(cols, names(b))] <- NA
 all_out <- rbind(a[cols], b[cols])
 
 #Speichert die df als CSV dateien
-write.csv2(finaliii, "C:\\Users\\nroes\\OneDrive\\R WA\\titanic_iii.csv",
+write.csv2(finaliii, "data/titanic_iii.csv",
            row.names = FALSE)
-write.csv2(corr_cat_all, "C:\\Users\\nroes\\OneDrive\\R WA\\titanic_korrelation.csv",
+write.csv2(corr_cat_all, "data/titanic_korrelation.csv",
            row.names = FALSE)
 
 # (iv)		deskriptive bivariate Statistiken (kategoriale & dichotome Variablen)
