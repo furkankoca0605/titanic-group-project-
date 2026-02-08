@@ -167,7 +167,7 @@ met_dic_stat = function(d, vm, vc){
   plot(x = seq(0, 100, length.out = length(x[y == uy[1]])), y = x[y == uy[1]], ylim = range(x), 
        col = "blue", xlab = "", ylab = names[1])
   points(x = seq(0, 100, length.out = length(x[y == uy[2]])), y = x[y == uy[2]], col = "green")
-  legend("topright", legend = uy, fill = c("blue", "green")
+  legend("topright", legend = uy, fill = c("blue", "green"))
 
   # doppeltes Histogramm
   par(mfrow = c(1, 2))
