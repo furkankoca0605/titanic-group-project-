@@ -8,12 +8,17 @@ metr_stat(titanic, Age)
 metr_stat(titanic, Fare)
 
 ## Analyse kategorielle Variablen (z.B. Klasse, Geschlecht, Einstiegshafen)
-freq_missing(titanic,var)
+vars_cat <- c("Deck", "Sex", "Embarked", "Side", "Survived", "Title", "Pclass")
+freq_tab <- freq_missing(titanic, vars_cat, include_na = TRUE)
+freq_tab
 
 ## Vergleich kategoriell - kategoriell (z.B. Überlebt/Geschlecht, Überlebt/Deck, ...)
 #Survived als Variable vorgegeben und ist bereits eingegeben
-surv_wide(titanic, var())
-pearson_cat(titanic, var1, var2)
+surv_sex <- surv_wide(titanic, "Sex")
+surv_sex
+
+chi_surv_sex <- pearson_cat(titanic, "Survived", "Sex")
+chi_surv_sex
 
 ## Vergleich metrisch - dichotom
 met_dic_stat(titanic, Age, Survived)
