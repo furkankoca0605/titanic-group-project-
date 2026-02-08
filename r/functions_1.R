@@ -147,10 +147,11 @@ write.csv2(finaliii, "data/titanic_iii.csv",
 write.csv2(corr_cat_all, "data/titanic_korrelation.csv",
            row.names = FALSE)
 
-# (iv)		deskriptive bivariate Statistiken (kategoriale & dichotome Variablen)
+# (iv)		deskriptive bivariate Statistiken (metrische & dichotome Variablen)
 
 # met_dic_stat   - gibt deskriptive Statistiken für Zusammenhang einer 
 #                  metrischen Variable vm und einer dichotomen Variable vc aus einem Datensatz d aus
+#                  (vc muss 2 Level haben)
 met_dic_stat = function(d, vm, vc){
   x = get_var(d, vm)
   y = get_var(d, vc)  
@@ -159,14 +160,14 @@ met_dic_stat = function(d, vm, vc){
   names = as.character(c(substitute(vm), substitute(vc)))
   x = remove_na(x)
   y = clean_factor(y)
-  uy = unique(y)
+  uy = levels(y)
 
   
   # Scatter-Plot mit zwei versch. Farben
   plot(x = seq(0, 100, length.out = length(x[y == uy[1]])), y = x[y == uy[1]], ylim = range(x), 
        col = "blue", xlab = "", ylab = names[1])
   points(x = seq(0, 100, length.out = length(x[y == uy[2]])), y = x[y == uy[2]], col = "green")
-  legend(x = 0, y = max(x), legend = uy, fill = c("blue", "green"))
+  legend("topright", legend = uy, fill = c("blue", "green")
 
   # doppeltes Histogramm
   par(mfrow = c(1, 2))
@@ -175,7 +176,10 @@ met_dic_stat = function(d, vm, vc){
   par(mfrow = c(1, 1))
   
   # doppelter Boxplot
-  boxplot(x ~ y, horizontal = TRUE, xlab = names[1], ylab = names[2], main = paste("Boxplot of", names[1]))   
+  boxplot(x ~ y, horizontal = TRUE, xlab = names[1], ylab = names[2], main = paste("Boxplot of", names[1])) 
+
+  # Übersicht
+  aggregate(x ~ y, FUN = summary)
 }
 
 
@@ -234,4 +238,46 @@ plot_cats(
   facet_var = "Sex",
   facet2_var = "Embarked"
 )
+
+
+# (vi)		deskriptive bivariate Statistiken (metrische & kategoriale Variablen)
+
+# met_dic_stat   - gibt deskriptive Statistiken für Zusammenhang einer metrischen
+#                  Variable vm und einer kategorialen Variable vc aus einem Datensatz d aus
+#                  (vc darf nun mehr als 2 Level haben)
+met_cat_stat = function(d, vm, vc){
+  x = get_var(d, vm)
+  y = get_var(d, vc)  
+  if(var_type(x) != "metric") stop("x muss eine metrische Variable sein")
+  if(var_type(y) != "categorical") stop("y muss eine kategoriale Variable sein")
+  names = as.character(c(substitute(vm), substitute(vc)))
+  x = remove_na(x)
+  y = clean_factor(y)
+  uy = levels(y)
+  k = length(uy)
+  cols = rainbow(k)
+  
+  # Scatter-Plot mit versch. Farben
+  plot(NA, xlim = c(0, 100), ylim = range(x), xlab = "", ylab = names[1])
+  for (i in seq_along(uy)) {
+    xi = x[y == uy[i]]
+    points(x = seq(0, 100, length.out = length(xi)), y = xi, col = cols)
+  }
+  legend("topright", legend = uy, fill = cols)
+  
+  # vielfaches Histogramm
+  par(mfrow = c(1, k))
+  ylim_all <- c(0, max(vapply(uy, \(u) max(hist(x[y == u], plot = FALSE)$counts), numeric(1))))
+  for (i in seq_along(uy)){
+    hist(x[y == uy[i]], xlim = range(x), ylim = ylim_all, col = cols[i], main = uy[i], xlab = names[1])
+  }
+  par(mfrow = c(1, 1))
+
+  # vielfacher Boxplot
+  boxplot(x ~ y, horizontal = TRUE, xlab = names[1], ylab = names[2], main = paste("Boxplot of", names[1]), col = cols)
+
+  # Übersicht
+  aggregate(x ~ y, FUN = summary)
+  
+}
 
