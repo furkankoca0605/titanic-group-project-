@@ -1,0 +1,75 @@
+\documentclass [ngerman]{scrartcl}
+\usepackage [utf 8]{inputenc}
+\usepackage [T1]{fontenc}
+\usepackage {lmodern, microtype}
+\usepackage {babel} 
+\usepackage {csquotes}
+
+% Title Page
+\title{Deskriptive Analyse des Titanic-Datensatzes in R}
+\author{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+	In diesem Projekt wird der Titanic-Datensatz im Rahmen des Moduls \enquote{Wissenschaftliches Arbeiten} deskriptiv analysiert. Zunächst wird der Datensatz und die Variablen für die Analyse aufbereitet. Anschließend werden deskriptive Statistiken und Visualisierungen erstellt, um Zusammenhänge zwischen dem Überleben und einzelner Variablen zu untersuchen. Die Ergebnisse zeigen deutliche Unterschiede in den Überlebenswahrscheinlichkeiten zwischen unterschiedlichen Gruppen. 
+\end{abstract}
+
+\section{Einleitung und Zielsetzung}
+Das Ziel der Analyse ist eine nachvollziehbare und reproduzierbare Beschreibung 	der Überlebensmuster der Passagiere auf der Titanic. Im Mittelpunkt steht, wie 	das Überleben von Merkmalen wie u.a. dem Geschlecht oder dem Alter 	zusammenhängt. 
+
+\section{Daten und Vorverarbeitung}
+Der Datensatz titanic.csv enthält u. a. Informationen zu Überleben, Klasse, Name, Geschlecht, Alter, Familienbeziehungen, Ticketpreis, Kabine und Einschiffungshafen. 
+
+Die Aufbereitung des Datensatzes erfolgte über das R Skript data\_cleaning.	 Folgende später genannte Schritte durchläuft der Datensatz in dem Skript, um die einwandfreie Arbeit an dem Datensatz zu gewährleisten. Der Datensatz wird anschließend als titanic\_clean.csv gespeichert, um in der Analyse weiterverwendet zu werden.  
+
+Folgende Schritte durchläuft das R-Skript: 
+\begin{itemize}
+\item Es extrahiert die Anrede aus Namen 
+
+\item Unterschiedliche Variablen werden umcodiert.  
+
+\item „Pclass“ als ordered-factor 
+
+\item „Survived“, „Sex“, „Embarked“ als factor 
+
+\item Spalten die für die Analyse nicht benutzt werden, werden gedroppt (\enquote{PassengerID},\enquote{Name},\enquote{Ticket},\enquote{Cabin}).  
+
+\item Ableitung der Kabinenmerkmale anhand der Kabinennummern, um das Deck und die Schiffsseite zu ermitteln, wobei unbekannte Einträge als NA gesetzt worden sind. 
+\end{itemize}
+
+\section{Methoden der Analysen}
+Für die Analyse verwenden wir zwei Skripte, welche einmal den Datensatz 	analysieren (functions\_1) und (functions\_2) enthält Hilfsfunktionen, damit die Analysefunktion sichergestellt werden kann. 
+
+In functions\_1 sind Funktionen für deskriptive Statistiken (metrisch/kategorial/bivariat) und die Visualisierung über die Erweiterung Tidyverse.  
+
+Die gewählten Ansätze sind für die Univariaten metrische Variablen. Für die Univariaten Kategoriale ist der Ansatz der, dass für die unterschiedlichen 	Variablen jeweils die absolute und relative Häufigkeit berechnet wurde, sowie die Anzahl der fehlenden Werte. Für die Bivariaten kategorialen Variablen gibt es zur 	Berechnung einerseits Korrelationskoeffizienten wie Cramér’s V und Chi-Quadrat-Test, sowie Häufigkeiten, wie das Überleben mit den einzelnen Variablen zusammenhängt. Der Ansatz für die Bivariate metrisch x dichotome Analyse ist. Für die Visualisierung nutzen wir ein Balkendiagramm, welches farblich für die Geschlechter die Überlebensanteile, basierend auf dem Abfahrthafen (\enquote{Embarked}) und der Passagierklasse (\enquote{Pclass}) anzeigt. 
+
+Die Auswertung erfolgt in einem Separaten Skript(analysing) indem jede Funktion einmal benutzt wird. 
+
+\section{Ergebnisse}
+\subsection{Univariate Ergebnisse}
+
+Die Auswertung der metrischen Variablen [...]
+
+Die Auswertung der univariaten kategorialen Variablen zeigen eine ungleiche Verteilung in den Daten des Datensatzes ($n=891$) bei u.a. dem Geschlecht der Passagiere (\enquote{Sex}) wo $\sim65\%$ der Passagiere männlich waren. Weiter gibt es eine Menge an fehlenden Daten $\sim77\%$, die anzeigen wer welche Kabinen belegt hat, wodurch Aussagen nur eingeschränkt getroffen werden können. Die Daten zeigen weiter, dass die meisten Reisenden in der dritten Klasse (\enquote{Pclass}) ($\sim55\%$) gereist sind und in Southampton (S) ($\sim72\%$) eingeschifft haben, wobei es hier nur 2 fehlende Werte gibt. 
+
+\subsection{Bivariate Ergebnisse}
+
+Die bivariaten Analysen (metrisch × dichotom) [...]
+
+Die bivariaten Analysen (kategorial × kategorial) zeigen einen starken Zusammenhang zwischen den Überlebenschancen und Geschlecht (\enquote{Sex}) und Title an mit jeweils einem Wert bei Cramers v bei über 0,5. Während es einen schwachen einen Zusammenhang zwischen dem Abfahrtshafen (\enquote{Embarked}) und der Überlebenschance gibt mit einem Wert bei Cramers v unter 0,2. 
+
+\subsection{Visualisierung für 4 kategoriale Variablen} 
+
+Die Visualisierung (Rplot v) zeigt, die Überlebensanteile nach Passagierklasse (\enquote{Pclass}), und Geschlecht unter Berücksichtigung des Abfahrthafens(\enquote{Embarked}). Die Grafik zeigt, dass Frauen deutlich höhere Überlebenschancen hatten als Männer. Diese Muster sind dabei nicht auf einzelne Passagierklassen oder Abfahrthäfen beschränkt, sondern spiegeln sich in jeder Variable wider. 
+
+\section{Diskussion}
+Die Ergebnisse, die wir durch die Analyse des Datensatzes erhalten haben, 	stimmen mit historischen Erwartungen überein: Die Überlebensrate von Frauen 	und Kindern, sowie die der Passagierklassen (1>2>3), erhöht ist. Durch die 	Verzerrungen durch nicht vorhandene Daten, ist es nicht sinnvoll möglich eine 	Aussage über die Beeinflussung zwischen dem Überleben und dem Ort der Kabine auf dem Schiff zu treffen. Auf Grund dessen, das hier nur deskriptive Methoden angewandt wurden, ist es nicht möglich daraus abzuleiten, warum es zu entsprechenden  
+
+\section{Fazit}
+Die Analyse zeigt deutliche Unterschiede zwischen der Überlebenswahrscheinlichkeit nach Geschlecht, Alter und Passagierklasse. Für Methoden könnten nun modellbasierte Verfahren benutzt werden, um vertiefende und robustere Aussagen treffen zu können. 
+
+
+\end{document}          
