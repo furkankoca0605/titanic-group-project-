@@ -11,7 +11,7 @@ in der Gruppe.
 
 ## Gruppenmitglieder
 - Jonas Ratke  
-- Niclas Rösener
+- Niclas Rösener (GitHub-Name: Eldevir)
 - Furkan Koca  
 
 ## Datensatz
