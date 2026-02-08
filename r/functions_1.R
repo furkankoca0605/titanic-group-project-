@@ -11,14 +11,14 @@ metr_stat = function(d, v){
   x = remove_na(x)
 
   
-  # einfacher Vektor als Übersicht
-  summary(x)
-
   # Histogramm
   hist(x, xlab = "", ylab = name, main = paste("Histogram of", name)) 
   
   # Boxplot
-  boxplot(x, horizontal = TRUE, xlab = name, main = paste("Boxplot of", name)) 
+  boxplot(x, horizontal = TRUE, xlab = name, main = paste("Boxplot of", name))
+  
+  # einfacher Vektor als Übersicht
+  summary(x)
 }
 
 
