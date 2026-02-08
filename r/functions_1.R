@@ -1,4 +1,4 @@
-source("functions_2.R")
+source("r/functions_2.R")
 titanic <- read.csv("data/titanic_clean.csv")
 
 # (i)			deskriptive Statistiken (metrische Variablen)
@@ -65,7 +65,7 @@ final <- freq_missing(df, vars, include_na = TRUE)
 final
 
 #Speichert den df als CSV datei
-write.csv2(final, "C:\\Users\\nroes\\OneDrive\\R WA\\titanic_ii.csv", row.names = FALSE)
+write.csv2(final, "data/titanic_ii.csv", row.names = FALSE)
 
 # (iii)		deskriptive bivariate Statistiken (zwei kategoriale Variablen)
 
@@ -107,7 +107,7 @@ finaliii <- do.call(rbind, lapply(setdiff(vars,"Survived"), \(v) surv_wide(df, v
 finaliii
 
 #Speichert den df als CSV datei
-write.csv2(finaliii, "C:\\Users\\nroes\\OneDrive\\R WA\\titanic_iii_2.csv", row.names=FALSE)
+write.csv2(finaliii, "data/titanic_iii.csv", row.names = FALSE)
 
 
 # (iv)		deskriptive bivariate Statistiken (kategoriale & dichotome Variablen)
