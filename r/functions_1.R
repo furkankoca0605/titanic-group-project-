@@ -105,10 +105,47 @@ surv_wide <- function(df, var, digits=3){
 #Ruft die Funktion auf und speichrt den fertigen df
 finaliii <- do.call(rbind, lapply(setdiff(vars,"Survived"), \(v) surv_wide(df, v)))
 finaliii
+#Weitere Funktion
+#Korrelation mit NA cramer und Pearson
+#Funktion wird definiert
+pearson_cat <- function(df, v1, v2, include_na=TRUE, digits=3){
+  x <- if (include_na) droplevels(addNA(df[[v1]])) else droplevels(df[[v1]])
+  y <- if (include_na) droplevels(addNA(df[[v2]])) else droplevels(df[[v2]])
+  tab <- table(x, y, useNA = if (include_na) "ifany" else "no")
+# Nullränder enternen  
+  tab <- tab[rowSums(tab) > 0, colSums(tab) > 0, drop = FALSE]  
+  
+  tst <- suppressWarnings(chisq.test(tab, correct = FALSE))
+  n <- sum(tab); r <- nrow(tab); k <- ncol(tab)
+  V <- sqrt(as.numeric(tst$statistic) / (n * (min(r, k) - 1)))
+  
+  data.frame(var1=v1, var2=v2, n=n,
+             chi2=round(as.numeric(tst$statistic), digits),
+             df=as.integer(tst$parameter),
+             p_value=round(tst$p.value, digits),
+             cramers_v=round(V, digits),
+             stringsAsFactors = FALSE)
+}
 
-#Speichert den df als CSV datei
-write.csv2(finaliii, "data/titanic_iii.csv", row.names = FALSE)
+# alle Kombinationen berechnen
+pairs <- combn(vars, 2, simplify = FALSE)
+corr_cat_all <- do.call(rbind, lapply(pairs, \(p) pearson_cat(df, p[1], p[2], include_na=TRUE)))
 
+# finaliii + corr_cat_all untereinander binden und speichern
+a <- transform(finaliii, source = "titaniciii")
+b <- transform(corr_cat_all, source = "corr_cat_all")
+
+cols <- union(names(a), names(b))
+a[setdiff(cols, names(a))] <- NA
+b[setdiff(cols, names(b))] <- NA
+
+all_out <- rbind(a[cols], b[cols])
+
+#Speichert die df als CSV dateien
+write.csv2(finaliii, "C:\\Users\\nroes\\OneDrive\\R WA\\titanic_iii.csv",
+           row.names = FALSE)
+write.csv2(corr_cat_all, "C:\\Users\\nroes\\OneDrive\\R WA\\titanic_korrelation.csv",
+           row.names = FALSE)
 
 # (iv)		deskriptive bivariate Statistiken (kategoriale & dichotome Variablen)
 
