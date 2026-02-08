@@ -18,7 +18,7 @@ metr_stat = function(d, v){
   hist(x, xlab = "", ylab = name, main = paste("Histogram of", name)) 
   
   # Boxplot
-  boxplot(x, ylab = name, main = paste("Boxplot of", name)) 
+  boxplot(x, horizontal = TRUE, xlab = name, main = paste("Boxplot of", name)) 
 }
 
 
@@ -175,7 +175,7 @@ met_dic_stat = function(d, vm, vc){
   par(mfrow = c(1, 1))
   
   # doppelter Boxplot
-  boxplot(x ~ y, xlab = names[2], ylab = names[1], main = paste("Boxplot of", names[1]))   
+  boxplot(x ~ y, horizontal = TRUE, xlab = names[1], ylab = names[2], main = paste("Boxplot of", names[1]))   
 }
 
 
