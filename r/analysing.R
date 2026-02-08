@@ -25,8 +25,6 @@ chi_surv_sex
 met_dic_stat(titanic, "Age", "Survived")
 met_dic_stat(titanic, "Fare", "Survived")
 
-## Vergleich mehrere kategorielle Variablen
-
 
 ## Vergleich metrisch - kategoriell
 met_cat_stat(titanic, "Fare", "Embarked")
