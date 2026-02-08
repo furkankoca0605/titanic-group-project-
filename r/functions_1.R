@@ -1,4 +1,5 @@
 source("functions_2.R")
+titanic <- read.csv("data/titanic_clean.csv")
 
 # (i)			deskriptive Statistiken (metrische Variablen)
 
@@ -22,9 +23,6 @@ metr_stat = function(d, v){
 
 
 # (ii)		deskriptive Statistiken (kategoriale Variablen)
-#Verweist auf andere Skripte, um die notwendigen Dateien zu finden
-source("r/02_helpers.R")
-titanic <- read.csv("data/titanic_clean.csv")
 
 #data frame aus Skript 1 in neuen df zum arbeiten
 df <- titanic
@@ -70,9 +68,6 @@ final
 write.csv2(final, "C:\\Users\\nroes\\OneDrive\\R WA\\titanic_ii.csv", row.names = FALSE)
 
 # (iii)		deskriptive bivariate Statistiken (zwei kategoriale Variablen)
-#Verweist auf andere Skripte, um die notwendigen Dateien zu finden
-source("r/02_helpers.R")
-titanic <- read.csv("data/titanic_clean.csv")
 
 #data frame aus Skript 1 in neuen df zum arbeiten
 df <- titanic
@@ -150,9 +145,6 @@ met_dic_stat = function(d, vm, vc){
 # (v)			geeignete Visualisierung von drei/vier kategorialen Variablen
 
 # Visualisierung für kategoriale Variablen Folgt:
-#Verweist auf andere Skripte, um die notwendigen Dateien zu finden und lädt erweiterungen
-source("r/02_helpers.R")
-titanic <- read.csv("data/titanic_clean.csv")
 
 library(tidyverse)
 
