@@ -24,128 +24,99 @@ metr_stat = function(d, v){
 
 # (ii)		deskriptive Statistiken (kategoriale Variablen)
 
-#data frame aus Skript 1 in neuen df zum arbeiten
-df <- titanic
-
-#Variablen die benutzt werden sollen als Vektor
-vars <- c("Deck","Sex","Embarked","Side","Survived","Title","Pclass")
-
-#Sorgt dafür, dass auch Variablen die nicht ein Faktor sind benutzt werden können
-df[vars] <- lapply(df[vars], factor)
-
-#Funktion wird definiert 
+# Funktion für Häufigkeiten wird definiert
 freq_missing <- function(df, vars, include_na = TRUE, digits = 3) {
+  if (missing(vars) || length(vars) == 0) {
+    stop("'vars' muss ein nicht-leerer Vektor mit Variablennamen sein")
+  }
+  if (!all(vars %in% names(df))) {
+    stop("Diese Variablen fehlen im Datensatz: ", paste(setdiff(vars, names(df)), collapse = ", "))
+  }
+#Liste pro Variable
   out <- lapply(vars, function(v) {
-    #Liste pro Variable
     x <- df[[v]]
-    
-    #Berechnung für Gesamte Anzahl und Fehlende Werte    
-    fehlende_n  <- sum(is.na(x))
+    fehlende_n <- sum(is.na(x))
     n_total <- length(x)
-    #BErechnung für relative und Absolute Häufigkeit    
-    tab  <- table(x, useNA = if (include_na) "ifany" else "no")
+    
+#Berrechnung Häufigkeit
+    tab <- table(x, useNA = if (include_na) "ifany" else "no")
     prop <- prop.table(tab)
     
-    #Bennent die Spalten
+#Benennt die Spalte
     data.frame(
-      variable  = v,
-      level     = names(tab),
-      anteil_absolut      = as.integer(tab),
-      anteil_relativ     = round(as.numeric(prop), digits),
+      variable = v,
+      level = names(tab),
+      anteil_absolut = as.integer(tab),
+      anteil_relativ = round(as.numeric(prop), digits),
       n_fehlend = fehlende_n,
-      n_total   = n_total,
+      n_total = n_total,
       stringsAsFactors = FALSE
     )
   })
   #Alle einzelnen VAriablenlisten zu einer 
   do.call(rbind, out)
 }
-#Ruft die Funktion auf und speichrt den fertigen df
-final <- freq_missing(df, vars, include_na = TRUE)
-final
-
-#Speichert den df als CSV datei
-write.csv2(final, "data/titanic_ii.csv", row.names = FALSE)
 
 # (iii)		deskriptive bivariate Statistiken (zwei kategoriale Variablen)
 
-#data frame aus Skript 1 in neuen df zum arbeiten
-df <- titanic
+#Funktion1 wird definiert 
+surv_wide <- function(df, var, digits = 3) {
+  if (missing(var) || length(var) != 1) stop("'var' muss genau ein Variablenname sein")
+  if (!(var %in% names(df))) stop("Variable nicht im Datensatz: ", var)
+  if (!("Survived" %in% names(df))) stop("Im Datensatz fehlt die Variable 'Survived'")
 
-#Variablen die benutzt werden sollen als Vektor
-vars <- c("Survived","Pclass","Sex","Embarked","Title","Deck","Side")
-
-#Sorgt dafür, dass auch Variablen die nicht ein Faktor sind benutzt werden können
-df[vars] <- lapply(df[vars], factor)
-
-#Funktion wird definiert 
-surv_wide <- function(df, var, digits=3){
   x <- addNA(df[[var]])
   y <- addNA(df$Survived)
-  tab <- table(level=x, survived=y, useNA="ifany")
+  tab <- table(level = x, survived = y, useNA = "ifany")
   n_tot <- rowSums(tab)
-  
-  #Trennen überlebt oder nicht  
+  #Trennen überlebt oder nicht
   n_yes <- if ("Yes" %in% colnames(tab)) tab[, "Yes"] else rep(0, nrow(tab))
   n_no  <- if ("No"  %in% colnames(tab)) tab[, "No"]  else rep(0, nrow(tab))
-  
   #Bennent die Spalten 
   data.frame(
     variable = var,
-    level    = rownames(tab),
-    n_total  = as.integer(n_tot),
-    absolut_ja    = as.integer(n_yes),
-    absolut_nein     = as.integer(n_no),
-    relativ_ja    = round(as.numeric(n_yes / n_tot), digits),
-    relativ_nein     = round(as.numeric(n_no  / n_tot), digits),
+    level = rownames(tab),
+    n_total = as.integer(n_tot),
+    absolut_ja = as.integer(n_yes),
+    absolut_nein = as.integer(n_no),
+    relativ_ja = round(as.numeric(n_yes / n_tot), digits),
+    relativ_nein = round(as.numeric(n_no / n_tot), digits),
     stringsAsFactors = FALSE
   )
 }
 
-#Ruft die Funktion auf und speichrt den fertigen df
-finaliii <- do.call(rbind, lapply(setdiff(vars,"Survived"), \(v) surv_wide(df, v)))
-finaliii
 #Weitere Funktion
-#Korrelation mit NA cramer und Pearson
+#Korrelation mit NA u.a.cramer 
 #Funktion wird definiert
-pearson_cat <- function(df, v1, v2, include_na=TRUE, digits=3){
+pearson_cat <- function(df, v1, v2, include_na = TRUE, digits = 3) {
+  if (missing(v1) || missing(v2)) stop("'v1' und 'v2' müssen angegeben werden")
+  if (!(v1 %in% names(df))) stop("Variable nicht im Datensatz: ", v1)
+  if (!(v2 %in% names(df))) stop("Variable nicht im Datensatz: ", v2)
+
   x <- if (include_na) droplevels(addNA(df[[v1]])) else droplevels(df[[v1]])
   y <- if (include_na) droplevels(addNA(df[[v2]])) else droplevels(df[[v2]])
+  # Nullränder enternen 
   tab <- table(x, y, useNA = if (include_na) "ifany" else "no")
-# Nullränder enternen  
-  tab <- tab[rowSums(tab) > 0, colSums(tab) > 0, drop = FALSE]  
-  
+  tab <- tab[rowSums(tab) > 0, colSums(tab) > 0, drop = FALSE]
+
   tst <- suppressWarnings(chisq.test(tab, correct = FALSE))
-  n <- sum(tab); r <- nrow(tab); k <- ncol(tab)
+  n <- sum(tab)
+  r <- nrow(tab)
+  k <- ncol(tab)
   V <- sqrt(as.numeric(tst$statistic) / (n * (min(r, k) - 1)))
-  
-  data.frame(var1=v1, var2=v2, n=n,
-             chi2=round(as.numeric(tst$statistic), digits),
-             df=as.integer(tst$parameter),
-             p_value=round(tst$p.value, digits),
-             cramers_v=round(V, digits),
-             stringsAsFactors = FALSE)
+ 
+   #Bennent die Spalten 
+  data.frame(
+    var1 = v1,
+    var2 = v2,
+    n = n,
+    chi2 = round(as.numeric(tst$statistic), digits),
+    df = as.integer(tst$parameter),
+    p_value = round(tst$p.value, digits),
+    cramers_v = round(V, digits),
+    stringsAsFactors = FALSE
+  )
 }
-
-# alle Kombinationen berechnen
-pairs <- combn(vars, 2, simplify = FALSE)
-corr_cat_all <- do.call(rbind, lapply(pairs, \(p) pearson_cat(df, p[1], p[2], include_na=TRUE)))
-
-# finaliii + corr_cat_all untereinander binden und speichern
-a <- transform(finaliii, source = "titaniciii")
-b <- transform(corr_cat_all, source = "corr_cat_all")
-
-cols <- union(names(a), names(b))
-a[setdiff(cols, names(a))] <- NA
-b[setdiff(cols, names(b))] <- NA
-
-all_out <- rbind(a[cols], b[cols])
-
-#Speichert die df als CSV dateien
-write.csv2(finaliii, "data/titanic_iii.csv",
-           row.names = FALSE)
-write.csv2(corr_cat_all, "data/titanic_korrelation.csv",
-           row.names = FALSE)
 
 # (iv)		deskriptive bivariate Statistiken (metrische & dichotome Variablen)
 
